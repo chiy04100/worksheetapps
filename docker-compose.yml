@@ -1,13 +1,13 @@
 version: '3.7'
 
-services: 
+services:
   db:
-    image: mysql:5.7
+    image: mysql:8.0
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
-      #MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: worksheet
       MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password  # 追加
     ports:
       - 4306:3306
     volumes:
@@ -23,8 +23,14 @@ services:
       - 3000:3000
     volumes:
       - ./api:/app
+    environment:
+      RAILS_ENV: development
+      MYSQL_HOST: db
+      MYSQL_DATABASE: worksheet
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
     command: rails server -b 0.0.0.0
-  front: 
+  front:
     build:
       context: ./front/
       dockerfile: Dockerfile
