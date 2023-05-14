@@ -2,10 +2,34 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useState } from 'react';
+import db from './firebase'
+import { addDoc, collection } from "firebase/firestore";
+
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const [name, setName] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      // Firestoreにデータを送信
+      const docRef = await addDoc(collection(db, "users"), {
+        name: name
+      });
+      console.log("Firestoreにデータを送信しました。ドキュメントID:", docRef.id);
+    } catch (error) {
+      console.error("Firestore接続エラー:", error);
+    }
+  }
+
+  const handleChange = (event) => {
+    setName(event.target.value);
+  }
+
+
   return (
     <>
       <Head>
@@ -107,6 +131,17 @@ export default function Home() {
               with&nbsp;Vercel.
             </p>
           </a>
+        </div>
+        <div>
+        <div>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Name:
+          <input type="text" value={name} onChange={handleChange} />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
         </div>
       </main>
     </>
